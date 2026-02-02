@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Will you be my Valentine?</title>
 
+  <!-- Confetti library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -29,6 +30,7 @@
       padding: 16px;
     }
 
+    /* FULL-SCREEN CONFETTI CANVAS */
     #confettiCanvas {
       position: fixed;
       inset: 0;
@@ -103,26 +105,32 @@
       opacity: .7;
     }
 
+    /* ✅ RESULT BEREICH JETZT WIRKLICH MITTIG */
     .result {
       display: none;
       margin-top: 18px;
       animation: pop .35s ease;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     .result h2 {
       font-size: clamp(30px, 4.5vw, 46px);
       margin: 10px 0;
     }
-    
-    .fireworks {
-      display: block;
-      width: 100%;          /* nutzt den Platz IN der Card */
-      max-width: 380px;     /* bleibt auf Desktop schön klein */
-      height: auto;
-      margin: 20px auto;    /* zentriert */
-      border-radius: 18px;
-    }
 
+    /* ✅ FOTO PERFEKT ZENTRIERT */
+    .fireworks {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      margin-top: 16px;
+      border-radius: 18px;
+      object-fit: cover;
+    }
 
     @keyframes pop {
       from { transform: scale(.96); opacity: 0; }
@@ -135,6 +143,7 @@
   <canvas id="confettiCanvas"></canvas>
 
   <main class="card">
+    <!-- ANIMAL WITH HEART -->
     <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="fur" x1="0" x2="1">
@@ -183,7 +192,7 @@
 
     <section class="result" id="result">
       <h2>YAY! 🎉</h2>
-      <img class="fireworks" src="./mfoto.jpg" alt="Valentine Foto" />
+      <img class="fireworks" src="./mfoto.jpg" alt="Valentine Foto">
     </section>
   </main>
 
@@ -206,7 +215,9 @@
 
     resizeConfettiCanvas();
     window.addEventListener("resize", resizeConfettiCanvas);
-    window.addEventListener("orientationchange", () => setTimeout(resizeConfettiCanvas, 150));
+    window.addEventListener("orientationchange", () =>
+      setTimeout(resizeConfettiCanvas, 150)
+    );
 
     const confettiInstance = confetti.create(confettiCanvas, {
       resize: false,
@@ -285,11 +296,10 @@
     yesBtn.addEventListener("click", () => {
       zone.style.display = "none";
       hint.style.display = "none";
-      result.style.display = "block";
+      result.style.display = "flex";
       resizeConfettiCanvas();
       fullScreenConfetti();
     });
   </script>
 </body>
 </html>
-
