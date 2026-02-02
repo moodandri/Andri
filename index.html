@@ -113,16 +113,16 @@
       font-size: clamp(30px, 4.5vw, 46px);
       margin: 10px 0;
     }
-
-    /* ✅ FIX: Bild sauber zentrieren */
+    
     .fireworks {
       display: block;
-      margin: 20px auto;          /* horizontal zentriert + Abstand */
-      width: min(380px, 90vw);
+      width: 100%;          /* nutzt den Platz IN der Card */
+      max-width: 380px;     /* bleibt auf Desktop schön klein */
       height: auto;
-      border-radius: 18px;        /* optional, sieht nice aus */
-      object-fit: cover;
+      margin: 20px auto;    /* zentriert */
+      border-radius: 18px;
     }
+
 
     @keyframes pop {
       from { transform: scale(.96); opacity: 0; }
@@ -292,3 +292,4 @@
   </script>
 </body>
 </html>
+
