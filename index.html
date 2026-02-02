@@ -46,9 +46,10 @@
       border-radius: 22px;
       text-align: center;
       box-shadow: 0 18px 60px rgba(0,0,0,.15);
+      position: relative;
+      z-index: 1;
     }
 
-    /* ✅ Emoji statt SVG */
     .emoji {
       font-size: clamp(96px, 18vw, 160px);
       line-height: 1;
@@ -116,15 +117,14 @@
       font-size: clamp(30px, 4.5vw, 46px);
       margin: 10px 0 30px;
     }
-    
-  .love-text {
-  font-size: 22px;
-  font-weight: 700;
-  color: #ff1f68;
-  margin-bottom: 14px;
-}
 
-    /* ✅ Bild sauber zentrieren */
+    .love-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ff1f68;
+      margin-bottom: 14px;
+    }
+
     .fireworks {
       display: block;
       width: 100%;
@@ -138,14 +138,64 @@
       from { transform: scale(.96); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+
+    /* ✅ POPUP OVERLAY */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(6px);
+      z-index: 10000; /* über allem */
+      padding: 16px;
+    }
+
+    .modal {
+      width: min(420px, 92vw);
+      background: rgba(255,255,255,.95);
+      border-radius: 22px;
+      padding: 22px 18px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.18);
+      text-align: center;
+      animation: pop .2s ease;
+    }
+
+    .modal h3 {
+      margin: 6px 0 16px;
+      font-size: clamp(22px, 4vw, 28px);
+    }
+
+    .modal-btn {
+      position: static;          /* wichtig: nicht absolute wie die anderen Buttons */
+      transform: none;
+      padding: 14px 26px;
+      font-size: 18px;
+      font-weight: 800;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: var(--yes);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(0,0,0,.14);
+      transition: background .12s ease;
+    }
+    .modal-btn:hover { background: var(--yesHover); }
   </style>
 </head>
 
 <body>
   <canvas id="confettiCanvas"></canvas>
 
+  <!-- ✅ Popup -->
+  <div class="overlay" id="overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Bisch diar sicher? 🥹</h3>
+      <button class="modal-btn" id="confirmYes">Jo</button>
+    </div>
+  </div>
+
   <main class="card">
-    <!-- ✅ Emoji statt SVG -->
     <div class="emoji">🥹</div>
 
     <h1>Michelle willsch du mis Valentinstagsdate si?</h1>
@@ -157,16 +207,12 @@
 
     <div class="hint" id="hint">“Nei” isch bitzli schüch</div>
 
-<section class="result" id="result">
-  <h2>YAY! 🎉</h2>
-
-  <div class="love-text">I liaba dii ❤️</div>
-
-  <img class="fireworks" src="./mfoto.jpg" alt="Valentine Foto" />
-</section>
+    <section class="result" id="result">
+      <h2>YAY! 🎉</h2>
+      <div class="love-text">I liaba dii ❤️</div>
+      <img class="fireworks" src="./mfoto.jpg" alt="Valentine Foto" />
+    </section>
   </main>
-
-  
 
   <script>
     const zone = document.getElementById("zone");
@@ -174,6 +220,9 @@
     const noBtn = document.getElementById("noBtn");
     const result = document.getElementById("result");
     const hint = document.getElementById("hint");
+
+    const overlay = document.getElementById("overlay");
+    const confirmYes = document.getElementById("confirmYes");
 
     const confettiCanvas = document.getElementById("confettiCanvas");
 
@@ -263,16 +312,22 @@
 
     noBtn.addEventListener("click", e => e.preventDefault());
 
+    /* ✅ Erster Klick auf Jo -> Popup */
     yesBtn.addEventListener("click", () => {
+      overlay.style.display = "grid";
+    });
+
+    /* ✅ Popup Jo -> dann erst Resultat anzeigen */
+    confirmYes.addEventListener("click", () => {
+      overlay.style.display = "none";
       zone.style.display = "none";
       hint.style.display = "none";
       result.style.display = "block";
       resizeConfettiCanvas();
       fullScreenConfetti();
     });
+
+    /* Optional: Klick ausserhalb schliesst NICHT, damit es nur "Jo" gibt */
   </script>
 </body>
 </html>
-
-
-
