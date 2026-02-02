@@ -115,14 +115,15 @@
     }
 
     /* ✅ FIX: Bild sauber zentrieren */
-    .fireworks {
-      display: block;
-      margin: 20px auto;          /* horizontal zentriert + Abstand */
-      width: min(380px, 90vw);
-      height: auto;
-      border-radius: 18px;        /* optional, sieht nice aus */
-      object-fit: cover;
-    }
+.fireworks {
+  display: block;
+  width: 100%;          /* nutzt den Platz IN der Card */
+  max-width: 380px;     /* bleibt auf Desktop schön klein */
+  height: auto;
+  margin: 20px auto;    /* zentriert */
+  border-radius: 18px;
+}
+
 
     @keyframes pop {
       from { transform: scale(.96); opacity: 0; }
@@ -172,14 +173,14 @@
             fill="#ff7aa2"/>
     </svg>
 
-    <h1>Michelle will you be my valentine?</h1>
+    <h1>Michelle willsch du mis Valentinstagsdate si?</h1>
 
     <section class="button-zone" id="zone">
-      <button id="yesBtn">Yes</button>
-      <button id="noBtn">No</button>
+      <button id="yesBtn">Jo</button>
+      <button id="noBtn">Nei</button>
     </section>
 
-    <div class="hint" id="hint">“No” isch bitz schüch</div>
+    <div class="hint" id="hint">“Nei” isch bitzli schüch</div>
 
     <section class="result" id="result">
       <h2>YAY! 🎉</h2>
@@ -292,3 +293,4 @@
   </script>
 </body>
 </html>
+
