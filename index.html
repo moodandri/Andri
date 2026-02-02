@@ -49,12 +49,19 @@
       padding: 18px;
     }
 
-    .lock-card {
+    .lock-wrap {
       width: min(420px, 92vw);
+      display: grid;
+      justify-items: center;
+      gap: 18px;
+    }
+
+    .lock-card {
+      width: 100%;
       background: rgba(255,255,255,.55);
       backdrop-filter: blur(12px);
       border-radius: 22px;
-      padding: 22px 18px;
+      padding: 18px 16px;
       box-shadow: 0 18px 60px rgba(0,0,0,.12);
       text-align: center;
     }
@@ -63,14 +70,14 @@
       font-weight: 800;
       font-size: 16px;
       opacity: .75;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .dots {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin: 10px 0 16px;
+      margin: 8px 0 6px;
       min-height: 18px;
     }
 
@@ -80,26 +87,32 @@
       border-radius: 999px;
       background: rgba(0,0,0,.18);
     }
-    .dot.filled {
-      background: rgba(0,0,0,.55);
+    .dot.filled { background: rgba(0,0,0,.55); }
+
+    .lock-hint {
+      font-size: 12px;
+      opacity: .6;
+      margin-top: 8px;
     }
 
+    /* ✅ Numpad (separat unter der Karte) */
     .pad {
+      width: 100%;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      padding: 6px 6px 2px;
       touch-action: manipulation;
     }
 
     .key {
       height: 64px;
+      width: 100%;
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 800;
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.9);
       box-shadow: 0 10px 24px rgba(0,0,0,.12);
       -webkit-tap-highlight-color: transparent;
       transition: transform .08s ease;
@@ -111,12 +124,6 @@
       font-size: 18px;
     }
 
-    .lock-hint {
-      font-size: 12px;
-      opacity: .6;
-      margin-top: 12px;
-    }
-
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-10px); }
@@ -124,13 +131,11 @@
       60% { transform: translateX(-8px); }
       80% { transform: translateX(8px); }
     }
-    .shake {
-      animation: shake .25s ease;
-    }
+    .shake { animation: shake .25s ease; }
 
-    /* ---------------- MAIN PAGE ---------------- */
+    /* ---------------- MAIN APP ---------------- */
     .app {
-      display: none; /* erst nach PIN sichtbar */
+      display: none;
       width: 100%;
       display: grid;
       place-items: center;
@@ -169,7 +174,7 @@
       touch-action: none;
     }
 
-    button {
+    button.mainbtn {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
@@ -303,14 +308,19 @@
 
   <!-- ✅ LOCKSCREEN -->
   <div class="lockscreen" id="lockscreen">
-    <div class="lock-card" id="lockCard">
-      <div class="lock-title">Enter your pin</div>
+    <div class="lock-wrap">
+      <div class="lock-card" id="lockCard">
+        <div class="lock-title">Enter your pin</div>
 
-      <div class="dots" id="dots">
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dots" id="dots">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+
+        <div class="lock-hint">Tip: November</div>
       </div>
 
+      <!-- ✅ Numpad sichtbar -->
       <div class="pad" id="pad">
         <button class="key" data-key="1">1</button>
         <button class="key" data-key="2">2</button>
@@ -321,13 +331,10 @@
         <button class="key" data-key="7">7</button>
         <button class="key" data-key="8">8</button>
         <button class="key" data-key="9">9</button>
-
         <button class="key secondary" data-action="clear">C</button>
         <button class="key" data-key="0">0</button>
         <button class="key secondary" data-action="back">⌫</button>
       </div>
-
-      <div class="lock-hint">Tip: 6-stellige PIN</div>
     </div>
   </div>
 
@@ -351,8 +358,8 @@
       <h1>Michelle willsch du mis Valentinstagsdate si?</h1>
 
       <section class="button-zone" id="zone">
-        <button id="yesBtn">Jo</button>
-        <button id="noBtn">Nei</button>
+        <button class="mainbtn" id="yesBtn">Jo</button>
+        <button class="mainbtn" id="noBtn">Nei</button>
       </section>
 
       <div class="hint" id="hint">“Nei” isch bitzli schüch</div>
@@ -367,7 +374,7 @@
 
   <script>
     /* ---------------- PIN ---------------- */
-    const CORRECT_PIN = "123456"; // <-- HIER aendern
+    const CORRECT_PIN = "071125"; // <-- HIER aendern
     const PIN_LEN = CORRECT_PIN.length;
 
     const lockscreen = document.getElementById("lockscreen");
@@ -380,9 +387,7 @@
 
     function renderDots() {
       const dots = dotsEl.querySelectorAll(".dot");
-      dots.forEach((d, i) => {
-        d.classList.toggle("filled", i < pin.length);
-      });
+      dots.forEach((d, i) => d.classList.toggle("filled", i < pin.length));
     }
 
     function resetPin(shake=false) {
@@ -407,16 +412,8 @@
       const key = btn.dataset.key;
       const action = btn.dataset.action;
 
-      if (action === "clear") {
-        resetPin(false);
-        return;
-      }
-
-      if (action === "back") {
-        pin = pin.slice(0, -1);
-        renderDots();
-        return;
-      }
+      if (action === "clear") { resetPin(false); return; }
+      if (action === "back") { pin = pin.slice(0, -1); renderDots(); return; }
 
       if (key != null) {
         if (pin.length >= PIN_LEN) return;
@@ -424,11 +421,8 @@
         renderDots();
 
         if (pin.length === PIN_LEN) {
-          if (pin === CORRECT_PIN) {
-            unlock();
-          } else {
-            setTimeout(() => resetPin(true), 120);
-          }
+          if (pin === CORRECT_PIN) unlock();
+          else setTimeout(() => resetPin(true), 120);
         }
       }
     });
@@ -461,14 +455,10 @@
     window.addEventListener("resize", resizeConfettiCanvas);
     window.addEventListener("orientationchange", () => setTimeout(resizeConfettiCanvas, 150));
 
-    const confettiInstance = confetti.create(confettiCanvas, {
-      resize: false,
-      useWorker: true
-    });
+    const confettiInstance = confetti.create(confettiCanvas, { resize: false, useWorker: true });
 
     function fullScreenConfetti() {
       const end = Date.now() + 1600;
-
       (function frame() {
         confettiInstance({
           particleCount: 12,
@@ -497,9 +487,7 @@
       yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
     }
 
-    function clamp(n, min, max) {
-      return Math.max(min, Math.min(max, n));
-    }
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
     function moveNo(px, py) {
       const z = zone.getBoundingClientRect();
@@ -508,8 +496,7 @@
       let dx = (b.left + b.width / 2) - px;
       let dy = (b.top + b.height / 2) - py;
       let mag = Math.hypot(dx, dy) || 1;
-      dx /= mag;
-      dy /= mag;
+      dx /= mag; dy /= mag;
 
       let newLeft = (b.left - z.left) + dx * 150;
       let newTop  = (b.top - z.top) + dy * 150;
@@ -526,33 +513,24 @@
 
     zone.addEventListener("pointermove", e => {
       const b = noBtn.getBoundingClientRect();
-      const d = Math.hypot(
-        (b.left + b.width / 2) - e.clientX,
-        (b.top + b.height / 2) - e.clientY
-      );
+      const d = Math.hypot((b.left + b.width / 2) - e.clientX, (b.top + b.height / 2) - e.clientY);
       if (d < 140) moveNo(e.clientX, e.clientY);
     });
 
     noBtn.addEventListener("click", e => e.preventDefault());
 
-    /* Popup Logik */
     let confirmClicks = 0;
     const targetClicks = 10;
 
-    function updateCounter() {
-      counterText.textContent = `Klicks: ${confirmClicks}/${targetClicks}`;
-    }
+    function updateCounter() { counterText.textContent = `Klicks: ${confirmClicks}/${targetClicks}`; }
 
     function moveConfirmButtonRandom() {
       const area = playground.getBoundingClientRect();
       const btn = confirmYes.getBoundingClientRect();
-
       const maxX = area.width - btn.width;
       const maxY = area.height - btn.height;
-
       const x = Math.random() * Math.max(0, maxX);
       const y = Math.random() * Math.max(0, maxY);
-
       confirmYes.style.left = x + "px";
       confirmYes.style.top = y + "px";
       confirmYes.style.transform = "none";
@@ -571,7 +549,6 @@
       confirmClicks = 0;
       updateCounter();
       overlay.style.display = "grid";
-
       confirmYes.style.left = "50%";
       confirmYes.style.top = "50%";
       confirmYes.style.transform = "translate(-50%, -50%)";
@@ -580,11 +557,7 @@
     confirmYes.addEventListener("click", () => {
       confirmClicks += 1;
       updateCounter();
-
-      if (confirmClicks >= targetClicks) {
-        finishYesFlow();
-        return;
-      }
+      if (confirmClicks >= targetClicks) { finishYesFlow(); return; }
       moveConfirmButtonRandom();
     });
   </script>
